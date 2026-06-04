@@ -1,0 +1,378 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║           CloudCUST — COMPLETE SETUP AND RUN GUIDE                      ║
+║           CPE4541 Cloud and Distributed Computing Lab                    ║
+║           Fatima Shahid (BCPE223011) · Faryal Naseem (BCPE223051)       ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ PREREQUISITES — INSTALL THESE FIRST (all free)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Docker Desktop
+   Download: https://www.docker.com/products/docker-desktop
+   - Install and launch it
+   - Make sure the Docker icon appears in your system tray (bottom-right)
+
+2. Minikube (for Option B only)
+   Download the installer:
+   https://storage.googleapis.com/minikube/releases/latest/minikube-installer.exe
+   - Double-click the .exe and install
+   - Open a NEW PowerShell after installing
+
+3. Git
+   Download: https://git-scm.com/download/win
+   - Install with default settings
+
+4. Verify everything is installed — open PowerShell and run:
+   docker --version
+   minikube version
+   git --version
+   (Each should print a version number, not an error)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ PROJECT FOLDER STRUCTURE (Z:\cdc\files\)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Z:\cdc\files\
+├── services\
+│   ├── auth\           app.py  Dockerfile  requirements.txt
+│   ├── course\         app.py  Dockerfile  requirements.txt
+│   └── exam\           app.py  Dockerfile  requirements.txt
+├── frontend\           index.html
+├── database\           init.sql
+├── k8s\                namespace-and-config.yaml
+│                       db-deployment.yaml
+│                       auth-deployment.yaml
+│                       course-deployment.yaml
+│                       exam-deployment.yaml
+│                       gateway-deployment.yaml
+├── distributed\        threading_simulation.py
+│                       socket_server.py
+│                       socket_client.py
+├── gpu\                numba_benchmark.ipynb
+├── monitoring\         locust_test.py
+├── .github\workflows\  ci.yml
+├── docker-compose.yml
+├── nginx.conf
+└── README.md
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ OPTION A — DOCKER COMPOSE (EASIEST, recommended for development)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Open PowerShell and run these commands one by one:
+
+  STEP 1 — Navigate to project folder
+  ─────────────────────────────────────
+  cd Z:\cdc\files
+
+  STEP 2 — Build and start everything
+  ─────────────────────────────────────
+  docker compose up --build
+
+  Wait for all 5 containers to start. You will see lines like:
+    cloudcust-auth   | * Running on http://0.0.0.0:5001
+    cloudcust-course | * Running on http://0.0.0.0:5002
+    cloudcust-exam   | * Running on http://0.0.0.0:5003
+
+  STEP 3 — Access the application
+  ─────────────────────────────────
+  Open your browser and go to:
+    http://localhost          ← Full UI (via Nginx gateway)
+    http://localhost:5001/health  ← Auth Service health check
+    http://localhost:5002/health  ← Course Service health check
+    http://localhost:5003/health  ← Exam Service health check
+
+  STEP 4 — Log in with test accounts
+  ────────────────────────────────────
+  Username: s001     Password: student123   (student)
+  Username: s002     Password: student123   (student)
+  Username: dr.waseem  Password: faculty123 (faculty — can publish grades)
+  Username: admin    Password: admin123     (admin)
+
+  STOP the application
+  ─────────────────────
+  Press Ctrl+C in the PowerShell window, then run:
+  docker compose down
+
+  To also delete the database volume (fresh start):
+  docker compose down -v
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ OPTION B — KUBERNETES via MINIKUBE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Open PowerShell and run these commands ONE BY ONE.
+Wait for each to finish before running the next.
+
+  STEP 1 — Start Minikube
+  ────────────────────────
+  minikube start --memory=4096 --cpus=2
+
+  Takes 2-5 minutes the first time. Wait for "Done!" message.
+
+  STEP 2 — Enable Ingress addon
+  ──────────────────────────────
+  minikube addons enable ingress
+
+  STEP 3 — Point Docker at Minikube's registry
+  ─────────────────────────────────────────────
+  ⚠️  Run this EVERY TIME you open a new PowerShell window:
+  & minikube -p minikube docker-env | Invoke-Expression
+
+  STEP 4 — Go to project folder
+  ──────────────────────────────
+  cd Z:\cdc\files
+
+  STEP 5 — Build the 3 Docker images inside Minikube
+  ────────────────────────────────────────────────────
+  docker build -t cloudcust/auth-service:latest   ./services/auth
+  docker build -t cloudcust/course-service:latest ./services/course
+  docker build -t cloudcust/exam-service:latest   ./services/exam
+
+  (First run downloads Python base image — takes a few minutes)
+
+  STEP 6 — Apply Kubernetes manifests (ORDER MATTERS)
+  ─────────────────────────────────────────────────────
+  kubectl apply -f k8s/namespace-and-config.yaml
+  kubectl apply -f k8s/db-deployment.yaml
+  kubectl apply -f k8s/auth-deployment.yaml
+  kubectl apply -f k8s/course-deployment.yaml
+  kubectl apply -f k8s/exam-deployment.yaml
+  kubectl apply -f k8s/gateway-deployment.yaml
+
+  STEP 7 — Watch pods start up
+  ─────────────────────────────
+  kubectl get pods -n cloudcust -w
+
+  Wait until ALL pods show STATUS = Running and READY = 1/1:
+    NAME                              READY   STATUS    RESTARTS
+    auth-deployment-xxx-xxx           1/1     Running   0
+    course-deployment-xxx-xxx         1/1     Running   0
+    exam-deployment-xxx-xxx           1/1     Running   0
+    db-deployment-xxx-xxx             1/1     Running   0
+    gateway-deployment-xxx-xxx        1/1     Running   0
+
+  Press Ctrl+C to stop watching once all are Running.
+
+  STEP 8 — Get the access URL
+  ────────────────────────────
+  minikube service gateway-service -n cloudcust --url
+
+  This prints something like: http://127.0.0.1:30080
+  Open that URL in your browser.
+
+  STOP everything
+  ────────────────
+  kubectl delete namespace cloudcust
+  minikube stop
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ MONITORING COMMANDS (Phase 4 — run while system is up)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Docker Compose monitoring:
+  ───────────────────────────
+  docker stats                    ← Live CPU/memory for all containers
+  docker stats --no-stream        ← Single snapshot (good for screenshot)
+
+  Kubernetes monitoring:
+  ───────────────────────
+  kubectl top pods -n cloudcust   ← CPU + memory per pod
+  kubectl top nodes               ← Node resource usage
+  kubectl get hpa -n cloudcust    ← Autoscaler status
+  kubectl get pods -n cloudcust   ← Pod status
+
+  View logs:
+  ───────────
+  kubectl logs -n cloudcust deployment/auth-deployment
+  kubectl logs -n cloudcust deployment/course-deployment
+  kubectl logs -n cloudcust deployment/exam-deployment
+  kubectl logs -n cloudcust deployment/db-deployment
+
+  Describe a pod (troubleshooting):
+  ──────────────────────────────────
+  kubectl describe pod -n cloudcust -l app=auth-service
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ LOAD TESTING WITH LOCUST (Phase 4)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Make sure the app is running first (Option A or B above).
+  Open a NEW PowerShell window:
+
+  STEP 1 — Install Locust
+  ────────────────────────
+  pip install locust
+
+  STEP 2 — Run Locust with browser UI
+  ─────────────────────────────────────
+  cd Z:\cdc\files
+  locust -f monitoring/locust_test.py --host http://localhost
+
+  STEP 3 — Open browser
+  ──────────────────────
+  Go to: http://localhost:8089
+  Set:   Number of users = 50
+         Spawn rate      = 5
+  Click: Start swarming
+
+  STEP 4 — Take screenshots
+  ──────────────────────────
+  Screenshot the Charts tab and Statistics tab for your Phase 4 report.
+
+  Headless mode (no browser, saves CSV):
+  ────────────────────────────────────────
+  locust -f monitoring/locust_test.py --host http://localhost ^
+         --users 50 --spawn-rate 5 --run-time 60s ^
+         --headless --csv monitoring/locust_results
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ DISTRIBUTED COMPUTING MODULES (Phase 3)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Install dependency first:
+  pip install requests psycopg2-binary
+
+  A) Multithreading simulation (100 concurrent students)
+  ───────────────────────────────────────────────────────
+  Make sure Docker Compose is running first.
+  cd Z:\cdc\files
+  python distributed/threading_simulation.py
+
+  Results saved to: distributed/threading_report.json
+
+  B) Socket programming (inter-service TCP communication)
+  ─────────────────────────────────────────────────────────
+  Open TWO PowerShell windows.
+
+  Window 1 — Start the server:
+    cd Z:\cdc\files
+    python distributed/socket_server.py
+
+  Window 2 — Run the client:
+    cd Z:\cdc\files
+    python distributed/socket_client.py
+
+  You will see the server print received requests and the client
+  print latency results.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GPU BENCHMARK NOTEBOOK (Phase 3 — CPU simulation)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Install dependencies:
+  pip install jupyter numpy matplotlib pandas
+
+  Run notebook:
+  cd Z:\cdc\files
+  jupyter notebook gpu/numba_benchmark.ipynb
+
+  In the browser that opens:
+  - Click Cell → Run All
+  - Two charts will be generated and saved to gpu/ folder
+  - A CSV results table will be saved to gpu/benchmark_results.csv
+  - Screenshot the charts for your Phase 4 report
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GITHUB SETUP (Phase 2 — version control)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  One-time setup:
+  ────────────────
+  cd Z:\cdc\files
+  git init
+  git remote add origin https://github.com/YOUR-USERNAME/cloudcust.git
+
+  Create branches as per proposal:
+  ──────────────────────────────────
+  git checkout -b dev
+  git add .
+  git commit -m "Phase 2: infrastructure design, Docker + K8s configs"
+  git push -u origin dev
+
+  git checkout -b feature/auth
+  git checkout -b feature/course
+  git checkout -b feature/exam
+  git checkout -b feature/frontend
+  git checkout -b feature/distributed
+
+  Workflow for each task:
+  ────────────────────────
+  git checkout feature/auth         ← switch to your branch
+  (make changes to files)
+  git add .
+  git commit -m "Add JWT login endpoint to auth service"
+  git push origin feature/auth
+  (create Pull Request on GitHub: feature/auth → dev)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ TEST CREDENTIALS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Role      Username     Password       Notes
+  ────────────────────────────────────────────────────────
+  Admin     admin        admin123       Full access
+  Faculty   dr.waseem    faculty123     Can publish grades
+  Faculty   dr.sara      faculty123     Can publish grades
+  Faculty   dr.usman     faculty123     Can publish grades
+  Student   s001         student123     Ayesha Raza
+  Student   s002         student123     Bilal Ahmed
+  Student   s003         student123     Zainab Noor
+  Student   s004         student123     Hassan Tariq
+  Student   s005         student123     Maryam Siddiqui
+
+  You can also register a new account from the login page.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Problem: "docker: command not found"
+  Fix: Docker Desktop is not running. Open Docker Desktop from Start Menu
+       and wait for it to fully start (icon stops animating).
+
+  Problem: Pod shows CrashLoopBackOff
+  Fix: kubectl logs -n cloudcust deployment/auth-deployment
+       Paste the error here for help.
+
+  Problem: "Cannot connect to database" error in service logs
+  Fix: The DB pod is still starting. Wait 30 seconds and check again:
+       kubectl get pods -n cloudcust
+
+  Problem: "ImagePullBackOff" in kubectl get pods
+  Fix: You forgot Step 3 (point Docker to Minikube). Run:
+       & minikube -p minikube docker-env | Invoke-Expression
+       Then rebuild the images (Step 5) again.
+
+  Problem: Port 80 already in use (Docker Compose)
+  Fix: Another program is using port 80. Change the nginx port in
+       docker-compose.yml from "80:80" to "8080:80"
+       Then access the app at http://localhost:8080
+
+  Problem: Minikube start fails with "VT-x not enabled"
+  Fix: Enable virtualisation in BIOS, or use:
+       minikube start --driver=docker --memory=4096 --cpus=2
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ PHASE CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Phase 1 (29 May)  ✅  Proposal submitted
+  Phase 2 (3 Jun)   ✅  docker-compose.yml, k8s/ manifests, GitHub setup
+  Phase 3 (10 Jun)  → Run Docker Compose + distributed modules + notebook
+  Phase 4 (18 Jun)  → Run Locust, docker stats, kubectl top, save screenshots
+  Phase 5 (24 Jun)  → Final report (IEEE format) + live demo
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

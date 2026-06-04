@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CloudCUST — University Portal</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --primary:   #0057FF;
+    --accent:    #00D4AA;
+    --dark:      #0A0F1E;
+    --surface:   #111827;
+    --surface2:  #1C2333;
+    --border:    #2A3447;
+    --text:      #E8EDF5;
+    --muted:     #8B9AB5;
+    --success:   #00D4AA;
+    --danger:    #FF4E6A;
+    --warning:   #FFB800;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; }
+  code, .mono { font-family: 'IBM Plex Mono', monospace; }
+
+  /* ── Auth Screen ───────────────────────────────────── */
+  #auth-screen {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at 20% 50%, #001a66 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, #003322 0%, transparent 50%),
+                var(--dark);
+  }
+  .auth-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 48px; width: 100%; max-width: 420px;
+    box-shadow: 0 32px 64px rgba(0,0,0,0.5);
+  }
+  .brand { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
+  .brand span { color: var(--primary); }
+  .brand-sub { color: var(--muted); font-size: 13px; margin-bottom: 36px; }
+
+  /* ── Form Controls ─────────────────────────────────── */
+  .form-label { font-size: 12px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .form-control, .form-select {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    border-radius: 8px; padding: 10px 14px; font-size: 14px;
+  }
+  .form-control:focus, .form-select:focus {
+    background: var(--surface2); border-color: var(--primary); color: var(--text);
+    box-shadow: 0 0 0 3px rgba(0,87,255,0.15);
+  }
+  .form-select option { background: var(--surface2); }
+  .btn-primary-cc {
+    background: var(--primary); color: #fff; border: none; border-radius: 8px;
+    padding: 12px 24px; font-weight: 600; font-size: 15px; width: 100%; cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn-primary-cc:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-outline-cc {
+    background: transparent; color: var(--primary); border: 1px solid var(--primary);
+    border-radius: 8px; padding: 10px 20px; font-weight: 600; font-size: 14px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-outline-cc:hover { background: var(--primary); color: #fff; }
+  .btn-danger-cc {
+    background: var(--danger); color: #fff; border: none; border-radius: 6px;
+    padding: 6px 14px; font-size: 13px; cursor: pointer; transition: opacity 0.15s;
+  }
+  .btn-danger-cc:hover { opacity: 0.8; }
+  .btn-success-cc {
+    background: var(--success); color: var(--dark); border: none; border-radius: 6px;
+    padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.15s;
+  }
+  .btn-success-cc:hover { opacity: 0.85; }
+  .auth-toggle { text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); }
+  .auth-toggle a { color: var(--accent); text-decoration: none; font-weight: 600; cursor: pointer; }
+
+  /* ── App Shell ─────────────────────────────────────── */
+  #app-screen { display: none; }
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 240px;
+    background: var(--surface); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; z-index: 100;
+  }
+  .sidebar-brand {
+    padding: 24px 20px 20px; border-bottom: 1px solid var(--border);
+  }
+  .sidebar-brand .name { font-size: 18px; font-weight: 700; }
+  .sidebar-brand .name span { color: var(--primary); }
+  .sidebar-brand .user-info { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .sidebar-brand .role-badge {
+    display: inline-block; margin-top: 6px; padding: 2px 8px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .role-student  { background: rgba(0,87,255,0.15);  color: var(--primary); }
+  .role-faculty  { background: rgba(0,212,170,0.15); color: var(--accent); }
+  .role-admin    { background: rgba(255,78,106,0.15); color: var(--danger); }
+  .nav-links { flex: 1; padding: 16px 0; }
+  .nav-link-item {
+    display: flex; align-items: center; gap: 10px; padding: 10px 20px;
+    color: var(--muted); font-size: 14px; font-weight: 500; cursor: pointer;
+    border-left: 3px solid transparent; transition: all 0.15s;
+  }
+  .nav-link-item:hover { color: var(--text); background: var(--surface2); }
+  .nav-link-item.active { color: var(--primary); border-left-color: var(--primary); background: rgba(0,87,255,0.08); }
+  .nav-icon { width: 18px; text-align: center; font-size: 16px; }
+  .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); }
+  .logout-btn {
+    width: 100%; background: transparent; border: 1px solid var(--border);
+    color: var(--muted); border-radius: 8px; padding: 8px; font-size: 13px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* ── Main Content ──────────────────────────────────── */
+  .main-content { margin-left: 240px; padding: 32px; min-height: 100vh; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .page-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .page-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+
+  /* ── Cards ─────────────────────────────────────────── */
+  .cc-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; margin-bottom: 16px;
+  }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 16px; margin-bottom: 28px; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+  }
+  .stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 8px; }
+  .stat-value { font-size: 32px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+  .stat-value.blue   { color: var(--primary); }
+  .stat-value.green  { color: var(--accent); }
+  .stat-value.yellow { color: var(--warning); }
+  .stat-value.red    { color: var(--danger); }
+
+  /* ── Table ─────────────────────────────────────────── */
+  .cc-table { width: 100%; border-collapse: collapse; }
+  .cc-table th {
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--muted); padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left;
+  }
+  .cc-table td { padding: 12px 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .cc-table tr:last-child td { border-bottom: none; }
+  .cc-table tr:hover td { background: var(--surface2); }
+  .badge-grade {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 12px; font-weight: 700; font-family: 'IBM Plex Mono', monospace;
+  }
+  .grade-A { background: rgba(0,212,170,0.15); color: var(--accent); }
+  .grade-B { background: rgba(0,87,255,0.15);  color: var(--primary); }
+  .grade-C { background: rgba(255,184,0,0.15); color: var(--warning); }
+  .grade-D { background: rgba(255,78,106,0.1); color: var(--danger); }
+  .grade-F { background: rgba(255,78,106,0.2); color: var(--danger); }
+  .badge-status {
+    display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  }
+  .status-enrolled { background: rgba(0,212,170,0.12); color: var(--accent); }
+  .status-dropped  { background: rgba(255,78,106,0.12); color: var(--danger); }
+
+  /* ── Alert ─────────────────────────────────────────── */
+  .cc-alert {
+    padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px;
+    display: none;
+  }
+  .cc-alert.success { background: rgba(0,212,170,0.12); border: 1px solid rgba(0,212,170,0.3); color: var(--accent); }
+  .cc-alert.error   { background: rgba(255,78,106,0.12); border: 1px solid rgba(255,78,106,0.3); color: var(--danger); }
+  .cc-alert.show { display: block; }
+
+  /* ── Loading ────────────────────────────────────────── */
+  .loading { text-align: center; padding: 40px; color: var(--muted); }
+  .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Seats indicator ────────────────────────────────── */
+  .seats-full    { color: var(--danger); }
+  .seats-low     { color: var(--warning); }
+  .seats-ok      { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- ════════════════ AUTH SCREEN ═══════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="brand">Cloud<span>CUST</span></div>
+    <div class="brand-sub">Capital University of Science and Technology</div>
+
+    <!-- Login Form -->
+    <div id="login-form">
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input type="text" id="login-username" class="form-control" placeholder="e.g. s001"/>
+      </div>
+      <div class="mb-4">
+        <label class="form-label">Password</label>
+        <input type="password" id="login-password" class="form-control" placeholder="••••••••"/>
+      </div>
+      <div id="login-alert" class="cc-alert error"></div>
+      <button class="btn-primary-cc" onclick="doLogin()">Sign In</button>
+      <div class="auth-toggle">Don't have an account? <a onclick="showRegister()">Register</a></div>
+    </div>
+
+    <!-- Register Form -->
+    <div id="register-form" style="display:none;">
+      <div class="mb-3">
+        <label class="form-label">Full Name</label>
+        <input type="text" id="reg-name" class="form-control" placeholder="Your full name"/>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input type="text" id="reg-username" class="form-control" placeholder="Choose a username"/>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" id="reg-password" class="form-control" placeholder="Min 6 characters"/>
+      </div>
+      <div class="mb-4">
+        <label class="form-label">Role</label>
+        <select id="reg-role" class="form-select">
+          <option value="student">Student</option>
+          <option value="faculty">Faculty</option>
+        </select>
+      </div>
+      <div id="reg-alert" class="cc-alert error"></div>
+      <div id="reg-success" class="cc-alert success"></div>
+      <button class="btn-primary-cc" onclick="doRegister()">Create Account</button>
+      <div class="auth-toggle">Already have an account? <a onclick="showLogin()">Sign In</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ APP SCREEN ════════════════════════ -->
+<div id="app-screen">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <div class="name">Cloud<span>CUST</span></div>
+      <div class="user-info" id="sidebar-username">Loading...</div>
+      <span class="role-badge" id="sidebar-role-badge">—</span>
+    </div>
+    <div class="nav-links">
+      <div class="nav-link-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+        <span class="nav-icon">⊞</span> Dashboard
+      </div>
+      <div class="nav-link-item" onclick="showPage('courses')" id="nav-courses">
+        <span class="nav-icon">📚</span> Courses
+      </div>
+      <div class="nav-link-item" onclick="showPage('my-courses')" id="nav-my-courses">
+        <span class="nav-icon">✅</span> My Courses
+      </div>
+      <div class="nav-link-item" onclick="showPage('exams')" id="nav-exams">
+        <span class="nav-icon">📋</span> Exams
+      </div>
+      <div class="nav-link-item" onclick="showPage('results')" id="nav-results">
+        <span class="nav-icon">🏆</span> Results
+      </div>
+      <div class="nav-link-item" onclick="showPage('publish')" id="nav-publish" style="display:none;">
+        <span class="nav-icon">✏️</span> Publish Grade
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">⬡ Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main-content">
+
+    <!-- Dashboard -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-title">Dashboard</div>
+      <div class="page-sub">Welcome back, <span id="dash-name">—</span></div>
+      <div class="stat-grid" id="dash-stats">
+        <div class="stat-card"><div class="stat-label">Enrolled Courses</div><div class="stat-value blue" id="stat-enrolled">—</div></div>
+        <div class="stat-card"><div class="stat-label">Upcoming Exams</div><div class="stat-value yellow" id="stat-exams">—</div></div>
+        <div class="stat-card"><div class="stat-label">Results Available</div><div class="stat-value green" id="stat-results">—</div></div>
+      </div>
+      <div class="cc-card">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;">My Upcoming Exams</div>
+        <div id="dash-exams-list"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- All Courses -->
+    <div class="page" id="page-courses">
+      <div class="page-title">Course Catalog</div>
+      <div class="page-sub">Browse and enroll in available courses</div>
+      <div id="courses-alert" class="cc-alert success"></div>
+      <div class="cc-card" style="overflow:auto;">
+        <div id="courses-list"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- My Courses -->
+    <div class="page" id="page-my-courses">
+      <div class="page-title">My Courses</div>
+      <div class="page-sub">Your enrolled and dropped courses</div>
+      <div id="my-courses-alert" class="cc-alert success"></div>
+      <div class="cc-card" style="overflow:auto;">
+        <div id="my-courses-list"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- Exams -->
+    <div class="page" id="page-exams">
+      <div class="page-title">Exam Schedule</div>
+      <div class="page-sub">Exams for your enrolled courses</div>
+      <div class="cc-card" style="overflow:auto;">
+        <div id="exams-list"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="page" id="page-results">
+      <div class="page-title">My Results</div>
+      <div class="page-sub">Grades and performance</div>
+      <div class="cc-card" style="overflow:auto;">
+        <div id="results-list"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- Publish Grade (faculty/admin only) -->
+    <div class="page" id="page-publish">
+      <div class="page-title">Publish Grade</div>
+      <div class="page-sub">Enter marks for a student exam</div>
+      <div class="cc-card" style="max-width:480px;">
+        <div class="mb-3">
+          <label class="form-label">Student User ID</label>
+          <input type="number" id="pub-userid" class="form-control" placeholder="e.g. 5"/>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Exam ID</label>
+          <input type="number" id="pub-examid" class="form-control" placeholder="e.g. 1"/>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Marks Obtained</label>
+          <input type="number" id="pub-marks" class="form-control" placeholder="e.g. 78"/>
+        </div>
+        <div class="mb-4">
+          <label class="form-label">Total Marks</label>
+          <input type="number" id="pub-total" class="form-control" value="100"/>
+        </div>
+        <div id="pub-alert" class="cc-alert error"></div>
+        <div id="pub-success" class="cc-alert success"></div>
+        <button class="btn-primary-cc" style="max-width:200px;" onclick="publishGrade()">Publish Grade</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── Config ─────────────────────────────────────────────
+// When running via Docker Compose/Nginx, the gateway proxies /api/*
+// Change BASE if running services directly on localhost ports
+const BASE = {
+  auth:   '/api/auth',
+  course: '/api/course',
+  exam:   '/api/exam'
+};
+
+let token = null;
+let userRole = null;
+
+// ── Helpers ─────────────────────────────────────────────
+async function api(service, path, method='GET', body=null) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(`${BASE[service]}${path}`, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+function showAlert(id, msg, type='error') {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = `cc-alert ${type} show`;
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+function fmt(dateStr) {
+  if (!dateStr) return '—';
+  return new Date(dateStr).toLocaleDateString('en-PK', {day:'2-digit',month:'short',year:'numeric'});
+}
+
+// ── Auth ────────────────────────────────────────────────
+function showRegister() {
+  document.getElementById('login-form').style.display = 'none';
+  document.getElementById('register-form').style.display = 'block';
+}
+function showLogin() {
+  document.getElementById('register-form').style.display = 'none';
+  document.getElementById('login-form').style.display = 'block';
+}
+
+async function doLogin() {
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  if (!username || !password) return showAlert('login-alert', 'Enter username and password');
+  try {
+    const data = await api('auth', '/login', 'POST', {username, password});
+    token    = data.token;
+    userRole = data.role;
+    initApp(data.full_name, data.role);
+  } catch(e) { showAlert('login-alert', e.message); }
+}
+
+async function doRegister() {
+  const full_name = document.getElementById('reg-name').value.trim();
+  const username  = document.getElementById('reg-username').value.trim();
+  const password  = document.getElementById('reg-password').value;
+  const role      = document.getElementById('reg-role').value;
+  if (!full_name || !username || !password) return showAlert('reg-alert', 'All fields required');
+  if (password.length < 6) return showAlert('reg-alert', 'Password must be at least 6 characters');
+  try {
+    await api('auth', '/register', 'POST', {full_name, username, password, role});
+    showAlert('reg-success', 'Account created! Please sign in.', 'success');
+    document.getElementById('reg-success').classList.add('show');
+    setTimeout(showLogin, 1800);
+  } catch(e) { showAlert('reg-alert', e.message); }
+}
+
+function doLogout() {
+  token = null; userRole = null;
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('login-username').value = '';
+  document.getElementById('login-password').value = '';
+}
+
+// ── App Init ────────────────────────────────────────────
+function initApp(fullName, role) {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display  = 'block';
+  document.getElementById('sidebar-username').textContent = fullName;
+  document.getElementById('dash-name').textContent = fullName.split(' ')[0];
+
+  const badge = document.getElementById('sidebar-role-badge');
+  badge.textContent = role.toUpperCase();
+  badge.className = `role-badge role-${role}`;
+
+  // Show publish link for faculty/admin
+  if (role === 'faculty' || role === 'admin') {
+    document.getElementById('nav-publish').style.display = 'flex';
+  }
+
+  showPage('dashboard');
+}
+
+// ── Navigation ──────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`page-${name}`).classList.add('active');
+  document.getElementById(`nav-${name}`).classList.add('active');
+
+  if (name === 'dashboard')  loadDashboard();
+  if (name === 'courses')    loadCourses();
+  if (name === 'my-courses') loadMyCourses();
+  if (name === 'exams')      loadExams();
+  if (name === 'results')    loadResults();
+}
+
+// ── Dashboard ───────────────────────────────────────────
+async function loadDashboard() {
+  try {
+    const [myCourses, myExams, myResults] = await Promise.all([
+      api('course', '/my-courses'),
+      api('exam',   '/my-exams'),
+      api('exam',   '/results')
+    ]);
+    const enrolled = myCourses.courses.filter(c => c.status === 'enrolled').length;
+    document.getElementById('stat-enrolled').textContent = enrolled;
+    document.getElementById('stat-exams').textContent    = myExams.exams.length;
+    document.getElementById('stat-results').textContent  = myResults.results.length;
+
+    const el = document.getElementById('dash-exams-list');
+    if (!myExams.exams.length) {
+      el.innerHTML = '<p style="color:var(--muted);font-size:14px;">No upcoming exams.</p>'; return;
+    }
+    el.innerHTML = `<table class="cc-table">
+      <thead><tr><th>Course</th><th>Type</th><th>Date</th><th>Venue</th><th>Duration</th></tr></thead>
+      <tbody>${myExams.exams.map(e=>`
+        <tr>
+          <td><span class="mono">${e.code}</span> — ${e.title}</td>
+          <td>${e.exam_type}</td>
+          <td>${fmt(e.exam_date)}</td>
+          <td>${e.venue}</td>
+          <td>${e.duration} min</td>
+        </tr>`).join('')}
+      </tbody></table>`;
+  } catch(e) { document.getElementById('dash-exams-list').innerHTML = `<p style="color:var(--danger)">${e.message}</p>`; }
+}
+
+// ── Courses ─────────────────────────────────────────────
+async function loadCourses() {
+  const el = document.getElementById('courses-list');
+  try {
+    const {courses} = await api('course', '/courses');
+    if (!courses.length) { el.innerHTML = '<p style="color:var(--muted)">No courses available.</p>'; return; }
+    el.innerHTML = `<table class="cc-table">
+      <thead><tr><th>Code</th><th>Title</th><th>Credits</th><th>Instructor</th><th>Schedule</th><th>Seats</th><th>Action</th></tr></thead>
+      <tbody>${courses.map(c => {
+        const seats = parseInt(c.seats_available);
+        const seatClass = seats === 0 ? 'seats-full' : seats <= 5 ? 'seats-low' : 'seats-ok';
+        return `<tr>
+          <td><span class="mono">${c.code}</span></td>
+          <td>${c.title}</td>
+          <td>${c.credits}</td>
+          <td>${c.instructor}</td>
+          <td>${c.schedule}</td>
+          <td class="${seatClass}">${seats}/${c.capacity}</td>
+          <td>${seats > 0
+            ? `<button class="btn-success-cc" onclick="enroll(${c.id})">Enroll</button>`
+            : `<span style="color:var(--muted);font-size:13px;">Full</span>`}
+          </td>
+        </tr>`;}).join('')}
+      </tbody></table>`;
+  } catch(e) { el.innerHTML = `<p style="color:var(--danger)">${e.message}</p>`; }
+}
+
+async function enroll(courseId) {
+  try {
+    const data = await api('course', '/enroll', 'POST', {course_id: courseId});
+    showAlert('courses-alert', data.message, 'success');
+    document.getElementById('courses-alert').classList.add('show');
+    loadCourses();
+  } catch(e) { showAlert('courses-alert', e.message, 'error'); document.getElementById('courses-alert').classList.add('show'); }
+}
+
+// ── My Courses ──────────────────────────────────────────
+async function loadMyCourses() {
+  const el = document.getElementById('my-courses-list');
+  try {
+    const {courses} = await api('course', '/my-courses');
+    if (!courses.length) { el.innerHTML = '<p style="color:var(--muted)">You are not enrolled in any courses.</p>'; return; }
+    el.innerHTML = `<table class="cc-table">
+      <thead><tr><th>Code</th><th>Title</th><th>Credits</th><th>Instructor</th><th>Schedule</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>${courses.map(c=>`<tr>
+        <td><span class="mono">${c.code}</span></td>
+        <td>${c.title}</td><td>${c.credits}</td><td>${c.instructor}</td><td>${c.schedule}</td>
+        <td><span class="badge-status status-${c.status}">${c.status}</span></td>
+        <td>${c.status==='enrolled'
+          ? `<button class="btn-danger-cc" onclick="drop(${courses.indexOf(c)})">Drop</button>`
+          : '—'}
+        </td>
+      </tr>`).join('')}
+      </tbody></table>`;
+    // store course ids for drop
+    window._myCourses = courses;
+  } catch(e) { el.innerHTML = `<p style="color:var(--danger)">${e.message}</p>`; }
+}
+
+async function drop(idx) {
+  if (!confirm('Drop this course?')) return;
+  const course = window._myCourses[idx];
+  // find course id by re-fetching all courses
+  try {
+    const {courses: all} = await api('course', '/courses');
+    const found = all.find(c => c.code === course.code);
+    if (!found) throw new Error('Course not found');
+    const data = await api('course', '/drop', 'POST', {course_id: found.id});
+    showAlert('my-courses-alert', data.message, 'success');
+    document.getElementById('my-courses-alert').classList.add('show');
+    loadMyCourses();
+  } catch(e) { showAlert('my-courses-alert', e.message, 'error'); document.getElementById('my-courses-alert').classList.add('show'); }
+}
+
+// ── Exams ───────────────────────────────────────────────
+async function loadExams() {
+  const el = document.getElementById('exams-list');
+  try {
+    const {exams} = await api('exam', '/my-exams');
+    if (!exams.length) { el.innerHTML = '<p style="color:var(--muted)">No exams scheduled for your courses.</p>'; return; }
+    el.innerHTML = `<table class="cc-table">
+      <thead><tr><th>Course</th><th>Type</th><th>Date</th><th>Venue</th><th>Duration</th></tr></thead>
+      <tbody>${exams.map(e=>`<tr>
+        <td><span class="mono">${e.code}</span> — ${e.title}</td>
+        <td style="text-transform:capitalize">${e.exam_type}</td>
+        <td>${fmt(e.exam_date)}</td>
+        <td>${e.venue}</td>
+        <td>${e.duration} min</td>
+      </tr>`).join('')}</tbody></table>`;
+  } catch(e) { el.innerHTML = `<p style="color:var(--danger)">${e.message}</p>`; }
+}
+
+// ── Results ─────────────────────────────────────────────
+async function loadResults() {
+  const el = document.getElementById('results-list');
+  try {
+    const {results} = await api('exam', '/results');
+    if (!results.length) { el.innerHTML = '<p style="color:var(--muted)">No results published yet.</p>'; return; }
+    el.innerHTML = `<table class="cc-table">
+      <thead><tr><th>Course</th><th>Exam</th><th>Date</th><th>Marks</th><th>Grade</th></tr></thead>
+      <tbody>${results.map(r=>`<tr>
+        <td><span class="mono">${r.code}</span> — ${r.title}</td>
+        <td style="text-transform:capitalize">${r.exam_type}</td>
+        <td>${fmt(r.exam_date)}</td>
+        <td>${r.marks} / ${r.total_marks}</td>
+        <td><span class="badge-grade grade-${r.grade}">${r.grade}</span></td>
+      </tr>`).join('')}</tbody></table>`;
+  } catch(e) { el.innerHTML = `<p style="color:var(--danger)">${e.message}</p>`; }
+}
+
+// ── Publish Grade ────────────────────────────────────────
+async function publishGrade() {
+  const user_id    = parseInt(document.getElementById('pub-userid').value);
+  const exam_id    = parseInt(document.getElementById('pub-examid').value);
+  const marks      = parseFloat(document.getElementById('pub-marks').value);
+  const total_marks= parseFloat(document.getElementById('pub-total').value);
+  if (!user_id || !exam_id || isNaN(marks)) return showAlert('pub-alert', 'All fields required');
+  try {
+    const data = await api('exam', '/grades/publish', 'POST', {user_id, exam_id, marks, total_marks});
+    document.getElementById('pub-success').textContent = `Grade published: ${data.grade}`;
+    document.getElementById('pub-success').classList.add('show');
+    setTimeout(() => document.getElementById('pub-success').classList.remove('show'), 4000);
+  } catch(e) { showAlert('pub-alert', e.message); }
+}
+</script>
+</body>
+</html>

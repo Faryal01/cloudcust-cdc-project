@@ -1,0 +1,69 @@
+# CloudCUST — Examination Service Kubernetes Deployment
+# Apply: kubectl apply -f k8s/exam-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exam-deployment
+  namespace: cloudcust
+  labels:
+    app: exam-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: exam-service
+  template:
+    metadata:
+      labels:
+        app: exam-service
+    spec:
+      containers:
+        - name: exam-service
+          image: cloudcust/exam-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5003
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: cloudcust-db-secret
+                  key: database-url
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service:5001"
+            - name: COURSE_SERVICE_URL
+              value: "http://course-service:5002"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5003
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5003
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: exam-service
+  namespace: cloudcust
+spec:
+  selector:
+    app: exam-service
+  ports:
+    - port: 5003
+      targetPort: 5003
+  type: ClusterIP

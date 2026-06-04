@@ -1,0 +1,103 @@
+# CloudCUST — Namespace, Secrets, Horizontal Pod Autoscalers
+# Apply FIRST: kubectl apply -f k8s/namespace-and-config.yaml
+
+# ── Namespace ────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloudcust
+  labels:
+    project: cloudcust
+
+---
+# ── DB Secret ────────────────────────────────────────────────────────
+# Plaintext values (for reference only):
+#   db-password  = cloudcust123
+#   database-url = postgresql://cloudcust:cloudcust123@db:5432/cloudcust
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudcust-db-secret
+  namespace: cloudcust
+type: Opaque
+data:
+  db-password:  Y2xvdWRjdXN0MTIz
+  database-url: cG9zdGdyZXNxbDovL2Nsb3VkY3VzdDpjbG91ZGN1c3QxMjNAZGI6NTQzMi9jbG91ZGN1c3Q=
+
+---
+# ── JWT Secret ───────────────────────────────────────────────────────
+# Plaintext: cloudcust_secret_key_2026
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudcust-jwt-secret
+  namespace: cloudcust
+type: Opaque
+data:
+  jwt-secret: Y2xvdWRjdXN0X3NlY3JldF9rZXlfMjAyNg==
+
+---
+# ── HPA — Auth Service ───────────────────────────────────────────────
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: auth-hpa
+  namespace: cloudcust
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: auth-deployment
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+
+---
+# ── HPA — Course Service ─────────────────────────────────────────────
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: course-hpa
+  namespace: cloudcust
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: course-deployment
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+
+---
+# ── HPA — Exam Service ───────────────────────────────────────────────
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: exam-hpa
+  namespace: cloudcust
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: exam-deployment
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60

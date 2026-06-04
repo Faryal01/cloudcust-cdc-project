@@ -1,0 +1,97 @@
+version: "3.9"
+
+# CloudCUST — Local Development (Docker Compose)
+# Run:  docker compose up --build
+# Stop: docker compose down
+
+networks:
+  cloudcust-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+
+services:
+
+  db:
+    image: postgres:15-alpine
+    container_name: cloudcust-db
+    restart: always
+    environment:
+      POSTGRES_DB:       cloudcust
+      POSTGRES_USER:     cloudcust
+      POSTGRES_PASSWORD: cloudcust123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "55432:5432"
+    networks:
+      - cloudcust-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cloudcust -d cloudcust"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth-service:
+    build: ./services/auth
+    container_name: cloudcust-auth
+    restart: on-failure
+    environment:
+      DATABASE_URL: postgresql://cloudcust:cloudcust123@db:5432/cloudcust
+      JWT_SECRET:   cloudcust_secret_key_2026
+    ports:
+      - "5001:5001"
+    networks:
+      - cloudcust-net
+    depends_on:
+      db:
+        condition: service_healthy
+
+  course-service:
+    build: ./services/course
+    container_name: cloudcust-course
+    restart: on-failure
+    environment:
+      DATABASE_URL:     postgresql://cloudcust:cloudcust123@db:5432/cloudcust
+      AUTH_SERVICE_URL: http://auth-service:5001
+    ports:
+      - "5002:5002"
+    networks:
+      - cloudcust-net
+    depends_on:
+      db:
+        condition: service_healthy
+
+  exam-service:
+    build: ./services/exam
+    container_name: cloudcust-exam
+    restart: on-failure
+    environment:
+      DATABASE_URL:        postgresql://cloudcust:cloudcust123@db:5432/cloudcust
+      AUTH_SERVICE_URL:    http://auth-service:5001
+      COURSE_SERVICE_URL:  http://course-service:5002
+    ports:
+      - "5003:5003"
+    networks:
+      - cloudcust-net
+    depends_on:
+      db:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:alpine
+    container_name: cloudcust-gateway
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - cloudcust-net
+    depends_on:
+      - auth-service
+      - course-service
+      - exam-service

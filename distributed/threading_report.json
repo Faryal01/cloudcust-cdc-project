@@ -1,0 +1,717 @@
+{
+  "simulation_name": "CloudCUST Concurrent Course Registration Workload",
+  "total_students": 100,
+  "successful": 100,
+  "failed": 0,
+  "wall_clock_seconds": 6.7485,
+  "target_url": "http://localhost:5002/courses",
+  "latency_summary": {
+    "min": 2.6375,
+    "max": 6.2104,
+    "mean": 4.226672,
+    "median": 4.12385,
+    "std_dev": 1.159544628233276
+  },
+  "results": [
+    {
+      "student_no": 8,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.6607,
+      "error": null
+    },
+    {
+      "student_no": 12,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.6375,
+      "error": null
+    },
+    {
+      "student_no": 15,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.6498,
+      "error": null
+    },
+    {
+      "student_no": 10,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.7104,
+      "error": null
+    },
+    {
+      "student_no": 7,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.7318,
+      "error": null
+    },
+    {
+      "student_no": 9,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.7634,
+      "error": null
+    },
+    {
+      "student_no": 30,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.716,
+      "error": null
+    },
+    {
+      "student_no": 22,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.7805,
+      "error": null
+    },
+    {
+      "student_no": 6,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.8739,
+      "error": null
+    },
+    {
+      "student_no": 1,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.9194,
+      "error": null
+    },
+    {
+      "student_no": 5,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.9089,
+      "error": null
+    },
+    {
+      "student_no": 18,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.8272,
+      "error": null
+    },
+    {
+      "student_no": 2,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.0093,
+      "error": null
+    },
+    {
+      "student_no": 21,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.8871,
+      "error": null
+    },
+    {
+      "student_no": 33,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.8245,
+      "error": null
+    },
+    {
+      "student_no": 34,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.8496,
+      "error": null
+    },
+    {
+      "student_no": 19,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.9465,
+      "error": null
+    },
+    {
+      "student_no": 25,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.9761,
+      "error": null
+    },
+    {
+      "student_no": 16,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.0377,
+      "error": null
+    },
+    {
+      "student_no": 24,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 2.9932,
+      "error": null
+    },
+    {
+      "student_no": 11,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.1253,
+      "error": null
+    },
+    {
+      "student_no": 23,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.0969,
+      "error": null
+    },
+    {
+      "student_no": 13,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.2071,
+      "error": null
+    },
+    {
+      "student_no": 14,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.2406,
+      "error": null
+    },
+    {
+      "student_no": 27,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.2291,
+      "error": null
+    },
+    {
+      "student_no": 20,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.2776,
+      "error": null
+    },
+    {
+      "student_no": 17,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.3547,
+      "error": null
+    },
+    {
+      "student_no": 29,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.2825,
+      "error": null
+    },
+    {
+      "student_no": 3,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.4639,
+      "error": null
+    },
+    {
+      "student_no": 28,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.3275,
+      "error": null
+    },
+    {
+      "student_no": 36,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.2998,
+      "error": null
+    },
+    {
+      "student_no": 26,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.4148,
+      "error": null
+    },
+    {
+      "student_no": 32,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.3888,
+      "error": null
+    },
+    {
+      "student_no": 4,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.566,
+      "error": null
+    },
+    {
+      "student_no": 37,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.3782,
+      "error": null
+    },
+    {
+      "student_no": 43,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.3489,
+      "error": null
+    },
+    {
+      "student_no": 39,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.3747,
+      "error": null
+    },
+    {
+      "student_no": 31,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.4161,
+      "error": null
+    },
+    {
+      "student_no": 38,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.3853,
+      "error": null
+    },
+    {
+      "student_no": 42,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.4155,
+      "error": null
+    },
+    {
+      "student_no": 40,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.4257,
+      "error": null
+    },
+    {
+      "student_no": 35,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.4496,
+      "error": null
+    },
+    {
+      "student_no": 41,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.4239,
+      "error": null
+    },
+    {
+      "student_no": 44,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.4574,
+      "error": null
+    },
+    {
+      "student_no": 48,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.7827,
+      "error": null
+    },
+    {
+      "student_no": 46,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.8085,
+      "error": null
+    },
+    {
+      "student_no": 45,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.849,
+      "error": null
+    },
+    {
+      "student_no": 49,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 3.9653,
+      "error": null
+    },
+    {
+      "student_no": 52,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.0203,
+      "error": null
+    },
+    {
+      "student_no": 50,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.1186,
+      "error": null
+    },
+    {
+      "student_no": 54,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.1387,
+      "error": null
+    },
+    {
+      "student_no": 47,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.1725,
+      "error": null
+    },
+    {
+      "student_no": 57,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.1291,
+      "error": null
+    },
+    {
+      "student_no": 51,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.3032,
+      "error": null
+    },
+    {
+      "student_no": 59,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.2904,
+      "error": null
+    },
+    {
+      "student_no": 62,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.3041,
+      "error": null
+    },
+    {
+      "student_no": 53,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.3485,
+      "error": null
+    },
+    {
+      "student_no": 61,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.3817,
+      "error": null
+    },
+    {
+      "student_no": 56,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.4032,
+      "error": null
+    },
+    {
+      "student_no": 58,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.4167,
+      "error": null
+    },
+    {
+      "student_no": 65,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.6073,
+      "error": null
+    },
+    {
+      "student_no": 55,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.6626,
+      "error": null
+    },
+    {
+      "student_no": 64,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.6206,
+      "error": null
+    },
+    {
+      "student_no": 66,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.7157,
+      "error": null
+    },
+    {
+      "student_no": 68,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.7417,
+      "error": null
+    },
+    {
+      "student_no": 60,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.8166,
+      "error": null
+    },
+    {
+      "student_no": 63,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.8049,
+      "error": null
+    },
+    {
+      "student_no": 69,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.864,
+      "error": null
+    },
+    {
+      "student_no": 67,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.8737,
+      "error": null
+    },
+    {
+      "student_no": 70,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 4.8746,
+      "error": null
+    },
+    {
+      "student_no": 74,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.0301,
+      "error": null
+    },
+    {
+      "student_no": 71,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.1003,
+      "error": null
+    },
+    {
+      "student_no": 72,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.0998,
+      "error": null
+    },
+    {
+      "student_no": 75,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.0901,
+      "error": null
+    },
+    {
+      "student_no": 77,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.1983,
+      "error": null
+    },
+    {
+      "student_no": 76,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.281,
+      "error": null
+    },
+    {
+      "student_no": 73,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.2996,
+      "error": null
+    },
+    {
+      "student_no": 79,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.2691,
+      "error": null
+    },
+    {
+      "student_no": 81,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.352,
+      "error": null
+    },
+    {
+      "student_no": 83,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.4649,
+      "error": null
+    },
+    {
+      "student_no": 78,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.4993,
+      "error": null
+    },
+    {
+      "student_no": 82,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.5383,
+      "error": null
+    },
+    {
+      "student_no": 86,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.7403,
+      "error": null
+    },
+    {
+      "student_no": 89,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.7627,
+      "error": null
+    },
+    {
+      "student_no": 84,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.852,
+      "error": null
+    },
+    {
+      "student_no": 85,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.9815,
+      "error": null
+    },
+    {
+      "student_no": 87,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.9879,
+      "error": null
+    },
+    {
+      "student_no": 80,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 6.0259,
+      "error": null
+    },
+    {
+      "student_no": 92,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 5.999,
+      "error": null
+    },
+    {
+      "student_no": 94,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 6.019,
+      "error": null
+    },
+    {
+      "student_no": 91,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 6.0395,
+      "error": null
+    },
+    {
+      "student_no": 88,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 6.0541,
+      "error": null
+    },
+    {
+      "student_no": 90,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 6.0471,
+      "error": null
+    },
+    {
+      "student_no": 95,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 6.0518,
+      "error": null
+    },
+    {
+      "student_no": 96,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 6.074,
+      "error": null
+    },
+    {
+      "student_no": 93,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 6.1102,
+      "error": null
+    },
+    {
+      "student_no": 97,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 6.1304,
+      "error": null
+    },
+    {
+      "student_no": 98,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 6.1318,
+      "error": null
+    },
+    {
+      "student_no": 100,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 6.1592,
+      "error": null
+    },
+    {
+      "student_no": 99,
+      "success": true,
+      "status_code": 200,
+      "latency_seconds": 6.2104,
+      "error": null
+    }
+  ]
+}
