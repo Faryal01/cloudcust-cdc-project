@@ -66,22 +66,22 @@ CREATE TABLE IF NOT EXISTS results (
 
 INSERT INTO users (username, password_hash, role, full_name) VALUES
   ('admin',
-   '$2b$12$KIX8X1nJZ8Qc9Y7vL3mZ8uQhGpN2xR5tW4sA1bV6cE9dF0gH3iJ7k',
+   '$2b$12$oC.bmD2On1y6WhEAshBR/uTyouIebIih8Q36NpjbdnMXuiaW5rsWy',
    'admin', 'System Administrator'),
   ('dr.waseem',
-   '$2b$12$KIX8X1nJZ8Qc9Y7vL3mZ8uQhGpN2xR5tW4sA1bV6cE9dF0gH3iJ7k',
+   '$2b$12$nSxoPfTHfpwrBnRdZT14BODTFvGIyzTeTBqIXCrr/At6p0dL4IJrC',
    'faculty', 'Dr. Waseem Abbas'),
   ('dr.sara',
-   '$2b$12$KIX8X1nJZ8Qc9Y7vL3mZ8uQhGpN2xR5tW4sA1bV6cE9dF0gH3iJ7k',
+   '$2b$12$nSxoPfTHfpwrBnRdZT14BODTFvGIyzTeTBqIXCrr/At6p0dL4IJrC',
    'faculty', 'Dr. Sara Malik'),
   ('dr.usman',
-   '$2b$12$KIX8X1nJZ8Qc9Y7vL3mZ8uQhGpN2xR5tW4sA1bV6cE9dF0gH3iJ7k',
+   '$2b$12$nSxoPfTHfpwrBnRdZT14BODTFvGIyzTeTBqIXCrr/At6p0dL4IJrC',
    'faculty', 'Dr. Usman Khan'),
-  ('s001', '$2b$12$KIX8X1nJZ8Qc9Y7vL3mZ8uQhGpN2xR5tW4sA1bV6cE9dF0gH3iJ7k', 'student', 'Ayesha Raza'),
-  ('s002', '$2b$12$KIX8X1nJZ8Qc9Y7vL3mZ8uQhGpN2xR5tW4sA1bV6cE9dF0gH3iJ7k', 'student', 'Bilal Ahmed'),
-  ('s003', '$2b$12$KIX8X1nJZ8Qc9Y7vL3mZ8uQhGpN2xR5tW4sA1bV6cE9dF0gH3iJ7k', 'student', 'Zainab Noor'),
-  ('s004', '$2b$12$KIX8X1nJZ8Qc9Y7vL3mZ8uQhGpN2xR5tW4sA1bV6cE9dF0gH3iJ7k', 'student', 'Hassan Tariq'),
-  ('s005', '$2b$12$KIX8X1nJZ8Qc9Y7vL3mZ8uQhGpN2xR5tW4sA1bV6cE9dF0gH3iJ7k', 'student', 'Maryam Siddiqui')
+  ('s001', '$2b$12$uru.xTywuG6keqSXmAEAE.743uO8fGm/yczK3vNvo0VqEFgE1UBZO', 'student', 'Ayesha Raza'),
+  ('s002', '$2b$12$uru.xTywuG6keqSXmAEAE.743uO8fGm/yczK3vNvo0VqEFgE1UBZO', 'student', 'Bilal Ahmed'),
+  ('s003', '$2b$12$uru.xTywuG6keqSXmAEAE.743uO8fGm/yczK3vNvo0VqEFgE1UBZO', 'student', 'Zainab Noor'),
+  ('s004', '$2b$12$uru.xTywuG6keqSXmAEAE.743uO8fGm/yczK3vNvo0VqEFgE1UBZO', 'student', 'Hassan Tariq'),
+  ('s005', '$2b$12$uru.xTywuG6keqSXmAEAE.743uO8fGm/yczK3vNvo0VqEFgE1UBZO', 'student', 'Maryam Siddiqui')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO courses (code, title, credits, instructor, schedule, capacity) VALUES
