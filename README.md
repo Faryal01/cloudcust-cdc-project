@@ -38,10 +38,10 @@ cloudcust/
 |---|---|
 | `main` | Stable releases only — PR required |
 | `dev` | Integration branch |
-| `feature/auth` | Auth Service (Fatima) |
-| `feature/course` | Course Service (Faryal) |
-| `feature/exam` | Exam Service (Faryal) |
-| `feature/frontend` | UI (Fatima) |
+| `feature/auth` | Auth Service  |
+| `feature/course` | Course Service  |
+| `feature/exam` | Exam Service  |
+| `feature/frontend` | UI  |
 | `feature/distributed` | Threading + sockets |
 
 ## Test Credentials
