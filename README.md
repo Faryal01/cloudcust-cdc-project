@@ -57,6 +57,4 @@ cloudcust/
 - **SDG-9** Industry & Innovation — industry-standard cloud-native toolchain
 - **SDG-11** Sustainable Cities — autoscaling reduces idle energy consumption
 
-## Contributors
-- Fatima Shahid (BCPE223011) - Auth Service, Threading, Socket Programming, Frontend UI
-- Faryal Naseem (BCPE223051) - Course Service, Exam Service, Kubernetes, GPU Benchmark, Locust Testing
+
