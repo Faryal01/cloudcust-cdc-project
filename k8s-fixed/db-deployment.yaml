@@ -56,3 +56,4 @@ spec:
   ports:
   - port: 5432
     targetPort: 5432
+# Database K8s Config - Faryal Naseem BCPE223051
